@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Profile,Content,BookDetail,ArticleDetail,Purchase
+from .models import Profile,Content,BookDetail,ArticleDetail,Purchase,User
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # أضف is_staff و is_superuser هنا ليتم إرجاعها في الـ JSON
+        fields = ['id', 'username', 'email', 'is_staff', 'is_superuser']
 
 class ProfileSerializers(serializers.ModelSerializer):
     class Meta:
