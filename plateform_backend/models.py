@@ -1,9 +1,10 @@
 import uuid
 from django.db import models
+
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-
+# User = get_user_model()
 class Profile(models.Model):
     # استخدام UUID كمفتاح رئيسي تلقائي التوليد
     profile_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -16,9 +17,11 @@ class Profile(models.Model):
     )
     display_name = models.CharField(max_length=255)
     bio = models.TextField(blank=True, null=True)
-    avatar_url = models.URLField(max_length=500, blank=True, null=True)
+    avatar_url = models.TextField(max_length=500, blank=True, null=True)
     payout_method = models.CharField(max_length=100, blank=True, null=True)
     payout_details = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
 
     def __str__(self):
         return f"{self.display_name} ({self.user.username})"
@@ -97,7 +100,12 @@ class ArticleDetail(models.Model):
     def __str__(self):
         return f"Article Detail for: {self.content.title}"
 
+import uuid
+from django.db import models
+from django.utils import timezone
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 class Purchase(models.Model):
     purchase_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -107,12 +115,19 @@ class Purchase(models.Model):
         related_name='purchases'
     )
     
-    # المشتري يرتبط بـ Profile المشتري
+    # -------------------------------------------------------------
+    # خيار 1: إذا كنت تريد ربطه برقم ID عادي كمفتاح أجنبي مرتبط بـ User
+    # (تأكد أن نموذج User يستخدم رقم عادي وليس UUID)
     payer = models.ForeignKey(
         Profile, 
         on_delete=models.CASCADE, 
         related_name='purchases'
     )
+
+    # خيار 2: إذا كنت تريد احتفاظ بالحقل كـ "رقم مجرد" دون علاقة ForeignKey
+    # payer_id = models.BigIntegerField()
+    # -------------------------------------------------------------
+
     author_amount = models.DecimalField(max_digits=10, decimal_places=2)
     platform_commission = models.DecimalField(max_digits=10, decimal_places=2)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -122,4 +137,6 @@ class Purchase(models.Model):
     purchased_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"Purchase {self.transaction_reference} - {self.payer.display_name}"
+        # استخدام getattr لتجنب أي أخطاء في حال عدم وجود display_name على نموذج User المباشر
+        payer_name = getattr(self.payer, 'display_name', str(self.payer))
+        return f"Purchase {self.transaction_reference} - {payer_name}"

@@ -5,7 +5,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # أضف is_staff و is_superuser هنا ليتم إرجاعها في الـ JSON
-        fields = ['id', 'username', 'email', 'is_staff', 'is_superuser']
+        fields = ['id', 'username', 'email', 'is_staff', 'is_superuser', 'is_active']
 
 class ProfileSerializers(serializers.ModelSerializer):
     class Meta:

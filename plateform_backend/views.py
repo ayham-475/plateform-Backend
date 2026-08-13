@@ -87,6 +87,60 @@ def login_user(request):
     else:
         return Response({"error": "البريد الإلكتروني أو كلمة المرور غير صحيحة."}, status=status.HTTP_401_UNAUTHORIZED)
 
+class Users(APIView):
+    def get(self,request):
+        users=User.objects.all()
+        serliazerUsers=UserSerializer(users,many=True)
+        return Response(serliazerUsers.data) 
+    
+    def post(self,request):
+        serliazerUsers=UserSerializer(data=request.data)
+
+        if serliazerUsers.is_valid():
+            serliazerUsers.save()
+            return Response(
+                serliazerUsers.data,
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            serliazerUsers.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+
+class Users_PK(APIView):
+    
+    def get_object(self,pk):
+        try:
+             return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise Http404
+    def get(self, request, pk, format=None):
+            user = self.get_object(pk)
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+         
+    def put(self,request,pk):
+        users=self.get_object(pk)
+        serliazerProfiles=UserSerializer(users,data=request.data)
+        if serliazerProfiles.is_valid():
+            serliazerProfiles.save()
+            return Response(
+                serliazerProfiles.data,
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+                        serliazerProfiles.errors,
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+    def delete(self,request,pk):
+        users=self.get_object(pk)
+        users.delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+
+        )
+
 class Profiles(APIView):
     def get(self,request):
         profiles=Profile.objects.all()
@@ -156,6 +210,8 @@ class Contents(APIView):
         return Response(serliazerContent.errors,
                         status=status.HTTP_400_BAD_REQUEST)
 class Contents_PK(APIView):
+
+
     def get_object(self,pk):
             try:
                  return Content.objects.get(pk=pk)
@@ -186,5 +242,166 @@ class Contents_PK(APIView):
         
                 )
 
-        
 
+    
+class BooksDeatils(APIView):
+    def get(self,request):
+        bookdeails=BookDetail.objects.all()
+        serliazerbookdeatils=BookDetailSerializers(bookdeails,many=True)
+        return Response(serliazerbookdeatils.data) 
+    
+    def post(self,request):
+        serilazerBookdeatils=BookDetailSerializers(data=request.data)
+
+        if serilazerBookdeatils.is_valid():
+            serilazerBookdeatils.save()
+            return Response(
+                serilazerBookdeatils.data,
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            serilazerBookdeatils.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+class BooksDeatils_pk(APIView):
+
+    def get_object(self,pk):
+            try:
+                 return BookDetail.objects.get(pk=pk)
+            except BookDetail.DoesNotExist:
+                raise Http404
+    def get(self, request, pk, format=None):
+        bookdeails=self.get_object(pk)
+        serilazerBookdeatils=BookDetailSerializers(bookdeails)
+        return Response(serilazerBookdeatils.data,
+                        status=status.HTTP_200_OK
+                        )
+    def put (self,request,pk):
+        bookdeails=self.get_object(pk)
+        serilazerBookdeatils=BookDetailSerializers(bookdeails,data=request.data)
+        if serilazerBookdeatils.is_valid():
+            serilazerBookdeatils.save()
+            return Response(serilazerBookdeatils.data,
+                                        status=status.HTTP_201_CREATED)
+    
+        return Response(serilazerBookdeatils.errors,
+                  status=status.HTTP_400_BAD_REQUEST)
+    def delete(self,request,pk):
+        bookdeails=self.get_object(pk)
+        bookdeails.delete()
+        
+        return Response(
+                    status=status.HTTP_204_NO_CONTENT
+        
+                )
+  
+
+    
+class ArticlesDeatils(APIView):
+    def get(self,request):
+        Articledeails=ArticleDetail.objects.all()
+        serliazerArticlesdeatils=ArticleDetailSerializers(Articledeails,many=True)
+        return Response(serliazerArticlesdeatils.data) 
+    
+    def post(self,request):
+        serliazerArticlesdeatils=ArticleDetailSerializers(data=request.data)
+
+        if serliazerArticlesdeatils.is_valid():
+            serliazerArticlesdeatils.save()
+            return Response(
+                serliazerArticlesdeatils.data,
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            serliazerArticlesdeatils.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+class ArticlesDeatils_pk(APIView):
+
+    def get_object(self,pk):
+            try:
+                 return ArticleDetail.objects.get(pk=pk)
+            except ArticleDetail.DoesNotExist:
+                raise Http404
+    def get(self, request, pk, format=None):
+        Articledeails=self.get_object(pk)
+        serliazerArticlesdeatils=ArticleDetailSerializers(Articledeails)
+        return Response(serliazerArticlesdeatils.data,
+                        status=status.HTTP_200_OK
+                        )
+    def put (self,request,pk):
+        Articledeails=self.get_object(pk)
+        serliazerArticlesdeatils=ArticleDetailSerializers(Articledeails,data=request.data)
+        if serliazerArticlesdeatils.is_valid():
+            serliazerArticlesdeatils.save()
+            return Response(serliazerArticlesdeatils.data,
+                                        status=status.HTTP_201_CREATED)
+    
+        return Response(serliazerArticlesdeatils.errors,
+                  status=status.HTTP_400_BAD_REQUEST)
+    def delete(self,request,pk):
+        Articledeails=self.get_object(pk)
+        Articledeails.delete()
+        
+        return Response(
+                    status=status.HTTP_204_NO_CONTENT
+        
+                )
+  
+  
+
+    
+class Purchases(APIView):
+    def get(self,request):
+        purchases=Purchase.objects.all()
+        serliazerArticlesdeatils=PurchaseSerializers(purchases,many=True)
+        return Response(serliazerArticlesdeatils.data) 
+    
+    def post(self,request):
+        purchaseSerializersa=PurchaseSerializers(data=request.data)
+
+        if purchaseSerializersa.is_valid():
+            purchaseSerializersa.save()
+            return Response(
+                purchaseSerializersa.data,
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            purchaseSerializersa.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+class Purchases_pk(APIView):
+
+    def get_object(self,pk):
+            try:
+                 return Purchase.objects.get(pk=pk)
+            except Purchase.DoesNotExist:
+                raise Http404
+    def get(self, request, pk, format=None):
+        purchases=self.get_object(pk)
+        purchaseSerializersa=purchaseSerializersa(purchases)
+        return Response(PurchaseSerializers.data,
+                        status=status.HTTP_200_OK
+                        )
+    def put (self,request,pk):
+        purchases=self.get_object(pk)
+        purchaseSerializersa=PurchaseSerializers(purchases,data=request.data)
+        if purchaseSerializersa.is_valid():
+            purchaseSerializersa.save()
+            return Response(purchaseSerializersa.data,
+                                        status=status.HTTP_201_CREATED)
+    
+        return Response(purchaseSerializersa.errors,
+                  status=status.HTTP_400_BAD_REQUEST)
+    def delete(self,request,pk):
+        Articledeails=self.get_object(pk)
+        Articledeails.delete()
+        
+        return Response(
+                    status=status.HTTP_204_NO_CONTENT
+        
+                )
+  
