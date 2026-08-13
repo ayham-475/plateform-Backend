@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: django_db
+    restart: always
+    environment:
+      POSTGRES_DB: my_django_db
+      POSTGRES_USER: my_db_user
+      POSTGRES_PASSWORD: my_secure_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
