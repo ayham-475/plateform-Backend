@@ -1,18 +1,28 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15
     container_name: django_db
     restart: always
-    environment:
-      POSTGRES_DB: my_django_db
-      POSTGRES_USER: my_db_user
-      POSTGRES_PASSWORD: my_secure_password
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: django_web
+    restart: always
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
 
 volumes:
   postgres_data:
